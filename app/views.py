@@ -6,7 +6,7 @@ This file creates your application.
 """
 
 from app import app, db, login_manager
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, session
 from flask_login import login_user, logout_user, current_user, login_required
 from app.forms import LoginForm
 from app.models import UserProfile
@@ -59,8 +59,9 @@ def login():
                     
                 # get user id, load into session
                 login_user(user, remember=remember_me)
-
+               
                 flash('logged in sucessfully.', 'success')
+                session['logged_in'] = True
                 # remember to flash a message to the user
                 return redirect(url_for("home"))  # they should be redirected to a secure-page route instead
             else:
@@ -72,7 +73,8 @@ def login():
 @login_required
 def logout():
     logout_user()
-    flash('You have benn logged out.', 'danger')
+    session.pop('logged_in', None)
+    flash('You have been logged out.', 'danger')
     return redirect(url_for('home'))
 
 
